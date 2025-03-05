@@ -6,7 +6,7 @@ import type { CtrlsService } from '../ctrlsService';
 import type { AgColumn } from '../entities/agColumn';
 import { _getRowAbove } from '../entities/positionUtils';
 import type { RowNode } from '../entities/rowNode';
-import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent, RowPinnedChangedEvent } from '../events';
+import type { BodyScrollEvent, CellFocusedEvent, PaginationChangedEvent } from '../events';
 import type { FocusService } from '../focusService';
 import type { GridBodyCtrl } from '../gridBodyComp/gridBodyCtrl';
 import {
@@ -429,7 +429,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     }
 
     public refreshFloatingRowComps(): void {
-        console.log('refreshFloatingRows', this.topRowCtrls.length);
         this.refreshFloatingRows(this.topRowCtrls, 'top');
 
         this.refreshFloatingRows(this.bottomRowCtrls, 'bottom');
@@ -490,8 +489,8 @@ export class RowRenderer extends BeanStub implements NamedBean {
         this.redrawAfterModelUpdate(params);
     }
 
-    private onRowPinnedChanged({ node }: RowPinnedChangedEvent): void {
-        this.redrawRows();
+    private onRowPinnedChanged(): void {
+        this.redrawAfterModelUpdate({ recycleRows: true });
     }
 
     public redrawRow(rowNode: RowNode, suppressEvent = false) {
@@ -508,7 +507,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
                 const node = pinnedSibling ?? rowNode;
                 const ctrl = dataStruct[node.rowIndex!];
                 if (!ctrl) {
-                    dataStruct[node.rowIndex!] = this.createRowCon(node, false, false);
                     return;
                 }
                 if (ctrl.rowNode !== node) {
@@ -523,7 +521,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
             switch (rowNode.rowPinned) {
                 case 'top':
                     destroyAndRecreateCtrl(this.topRowCtrls, rowNode.pinnedSibling);
-                    console.log('recreated top ctrls', this.topRowCtrls.length);
                     break;
                 case 'bottom':
                     destroyAndRecreateCtrl(this.bottomRowCtrls, rowNode.pinnedSibling);
@@ -581,7 +578,6 @@ export class RowRenderer extends BeanStub implements NamedBean {
     // +) onPinnedRowDataChanged, recycleRows = true
     // +) redrawRows (from Grid API), recycleRows = true/false
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
-        console.log('redrawAfterModelUpdate', params);
         this.getLockOnRefresh();
 
         const focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
