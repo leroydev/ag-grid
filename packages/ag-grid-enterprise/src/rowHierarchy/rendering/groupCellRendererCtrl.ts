@@ -449,6 +449,10 @@ export class GroupCellRendererCtrl extends BeanStub implements IGroupCellRendere
             return false;
         }
 
+        if ((node as RowNode).isPinnedSibling) {
+            return false;
+        }
+
         const isFullWidth = !column;
         if (isFullWidth) {
             return true;
