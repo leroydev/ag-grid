@@ -5,8 +5,8 @@ import type { CtrlsService } from '../ctrlsService';
 import type { FilterManager } from '../filter/filterManager';
 import { _isAnimateRows, _isDomLayout } from '../gridOptionsUtils';
 import type { IColsService } from '../interfaces/iColsService';
+import type { IPinnedRowModel } from '../interfaces/iPinnedRowModel';
 import { _requestAnimationFrame } from '../misc/animationFrameService';
-import type { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import type { LayoutView } from '../styling/layoutFeature';
 import { LayoutFeature } from '../styling/layoutFeature';
 import { _isInvisibleScrollbar } from '../utils/browser';
@@ -52,7 +52,7 @@ export class GridBodyCtrl extends BeanStub {
     private colModel: ColumnModel;
     private scrollVisibleSvc: ScrollVisibleService;
     private rowGroupColsSvc?: IColsService;
-    private pinnedRowModel?: PinnedRowModel;
+    private pinnedRowModel?: IPinnedRowModel;
     private filterManager?: FilterManager;
 
     public wireBeans(beans: BeanCollection): void {
@@ -144,6 +144,7 @@ export class GridBodyCtrl extends BeanStub {
             scrollGapChanged: this.updateScrollingClasses.bind(this),
             pinnedRowDataChanged: setFloatingHeights,
             pinnedHeightChanged: setFloatingHeights,
+            rowPinnedChanged: setFloatingHeights,
             headerHeightChanged: this.setStickyTopOffsetTop.bind(this),
             columnRowGroupChanged: setGridRootRole,
             columnPivotChanged: setGridRootRole,
